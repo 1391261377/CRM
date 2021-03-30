@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       https://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--    spring mvc 配置文件  声明servlet -->
+    <context:component-scan base-package="cn.crm.settings.controller"/>
+    <context:component-scan base-package="cn.crm.workbench.controller"/>
+
+
+    <!--    注解驱动   响应ajax 请求返回json-->
+    <mvc:annotation-driven/>
+
+
+<!--    视图解析器-->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/static/workbench/"/>
+
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--    静态资源访问-->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+
+<!--    拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+<!--            <mvc:exclude-mapping path="/static/jquery/**"/>-->
+<!--            <mvc:exclude-mapping path="/static/image/**"/>-->
+            <mvc:exclude-mapping path="/static/**"/>
+
+            <mvc:exclude-mapping path="/user/selectLogin"/>
+            <bean class="cn.crm.web.handler.MyInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 配置transactionManager事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置事物通知属性 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!-- 定义事物传播特性 -->
+        <tx:attributes>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="edit*" propagation="REQUIRED" />
+            <tx:method name="save*" propagation="REQUIRED" />
+            <tx:method name="add*" propagation="REQUIRED" />
+            <tx:method name="new*" propagation="REQUIRED" />
+            <tx:method name="set*" propagation="REQUIRED" />
+            <tx:method name="remove*" propagation="REQUIRED" />
+            <tx:method name="delete*" propagation="REQUIRED" />
+            <tx:method name="change*" propagation="REQUIRED" />
+            <tx:method name="check*" propagation="REQUIRED" />
+            <tx:method name="get*" propagation="REQUIRED" read-only="true" />
+            <tx:method name="find*" propagation="REQUIRED" read-only="true" />
+            <tx:method name="load*" propagation="REQUIRED" read-only="true" />
+            <tx:method name="*" propagation="REQUIRED" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+    <!-- 配置事物切面 -->
+
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* cn.crm.*.service..*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
+    </aop:config>
+</beans>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--    读取属性配置文件-->
+   <context:property-placeholder location="classpath:jdbc.properties"/>
+
+<!--    声明数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${jdbc_url}"/>
+        <property name="username" value="${jdbc_username}"/>
+        <property name="password" value="${jdbc_password}"/>
+        <property name="maxActive" value="${jdbc_max}"/>
+    </bean>
+
+<!--sessionFactory工厂-->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+<!--dao 代理对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sessionFactory"/>
+        <property name="basePackage" value="cn.crm.dao"/>
+    </bean>
+
+
+<!--    扫描 注解-->
+    <context:component-scan base-package="cn.crm"/>
+
+
+
+</beans>

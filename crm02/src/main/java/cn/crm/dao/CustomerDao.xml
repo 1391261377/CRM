@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.crm.dao.CustomerDao">
+    <insert id="save">
+        insert into tbl_customer (
+        id, owner, name, website, phone, createBy, createTime,contactSummary, nextContactTime, description, address)
+        values (
+          #{id},
+          #{owner},
+          #{name},
+         #{website,},
+         #{phone,},
+         #{createBy,},
+         #{createTime},
+         #{contactSummary},
+         #{nextContactTime},
+         #{description},
+         #{address}
+        );
+
+    </insert>
+
+
+    <select id="getCustomerByName" resultType="cn.crm.workbench.domain.Customer">
+        select * from tbl_customer where  name =#{company}
+    </select>
+    <select id="getCustomerName" resultType="java.lang.String">
+
+        select name from tbl_customer where name like '%' #{name} '%';
+    </select>
+    <select id="getTotalByCondition" resultType="java.lang.Integer">
+        select count(*)
+        from tbl_customer cus
+        join tbl_user u
+        on cus.owner=u.id
+        <where>
+            <if test="name!=null and name!=''">
+                cus.name like '%' #{name} '%'
+            </if>
+            <if test="owner!=null and owner!=''">
+                and cus.owner like '%' #{owner} '%'
+            </if>
+            <if test="phone!=null and phone!=''">
+                and cus.phone like '%' #{phone} '%'
+            </if>
+            <if test="website!=null and website!=''">
+                and cus.website like '%' #{website} '%'
+            </if>
+        </where>
+
+    </select>
+
+
+
+    <select id="getActivityListByCondition" resultType="cn.crm.workbench.domain.Customer">
+        select
+        cus.id,
+        cus.name,
+        u.name as owner,
+        cus.phone,
+        cus.website
+
+        from tbl_customer cus
+        join tbl_user u
+        on cus.owner=u.id
+
+        <where>
+            <if test="name!=null and name!=''">
+                cus.name like '%' #{name} '%'
+            </if>
+
+            <if test="owner!=null and owner!=''">
+                and  cus.name like '%' #{owner} '%'
+            </if>
+            <if test="phone!=null and phone!=''">
+                and cus.phone like '%' #{phone} '%'
+            </if>
+            <if test="website!=null and website!=''">
+                and cus.website like '%' #{website} '%'
+            </if>
+        </where>
+        order by cus.name desc
+        limit #{skipCount},#{pageSize}
+    </select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+$.ajax({
+                url: "",
+                data: {
+                    "":
+                },
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+
+
+                }
+
+            })
+
+ String createTime = DateTimeUtil.getSysTime();
+ String createBy = ((User) request.getSession().getAttribute("user")).getName();
+
+
+      //日期格式控件
+                  $(".time").datetimepicker({
+                      minView: "month",
+                      language: "zh-CN",
+                      format: "yyyy-mm-dd",
+                      autoclose: true,
+                      todayBtn: true,
+                      pickerPosition: "bottom-left"
+                  });
